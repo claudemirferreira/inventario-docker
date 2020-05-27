@@ -1,0 +1,30 @@
+version: "3.5"
+
+networks: 
+  inventario-network:
+    driver: bridge
+
+services:
+  mysqlsrv:
+    image: mysql
+    restart: always
+    container_name: mysql-inventario
+    command: --default-authentication-plugin=mysql_native_password
+    volumes:
+        - /var/lib/mysql:/var/lib/mysql
+    ports:
+        - 3306:3306
+    environment:
+        - MYSQL_ROOT_PASSWORD=root
+        - MYSQL_DATABASE=dbinventario
+    networks:
+        - inventario-network
+  
+  app:
+    build: ../typeorm-inventario/.
+    ports: 
+      - "3000:3000"
+    command: npm start 
+    networks:
+      - inventario-network
+
