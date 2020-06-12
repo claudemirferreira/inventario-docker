@@ -8,8 +8,9 @@ services:
   mysqlsrv:
     image: mysql
     restart: always
-    container_name: mysql-inventario
+    container_name: mysql_inventario
     command: --default-authentication-plugin=mysql_native_password
+    container_name: inventario-database
     volumes:
         - /var/lib/mysql:/var/lib/mysql
     ports:
@@ -20,11 +21,22 @@ services:
     networks:
         - inventario-network
   
-  app:
+  app-back:
     build: ../typeorm-inventario/.
     ports: 
       - "3000:3000"
-    command: npm start 
+    command: npm start
+    container_name: inventario_back 
     networks:
       - inventario-network
 
+  app-front:
+    build:
+      context: ../inventario
+      dockerfile: Dockerfile
+    ports:
+    - "80:80"
+    container_name: inventario_front
+    volumes:
+      - ./app-front:/usr/src/app/app-ui
+      - /usr/src/app/app-ui/node_modules
